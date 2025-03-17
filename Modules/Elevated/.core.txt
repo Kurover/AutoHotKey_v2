@@ -1,0 +1,130 @@
+;=== Config
+varIconNormal := IniRead(settingsPath,"Tray","AdminIcon")
+varIconSuspend := IniRead(settingsPath,"Tray","AdminIconDisabled")
+varIconTipNormal := IniRead(settingsPath,"Tray","AdminTooltip")
+varIconTipSuspend := IniRead(settingsPath,"Tray","AdminTooltipDisabled")
+TraySetIcon(varIconNormal,,true)
+A_IconTip := varIconTipNormal
+
+;=== Ask to Elevate, otherwise exit
+;=== Code is straight out of the documentation
+full_command_line := DllCall("GetCommandLine", "str")
+
+if not (A_IsAdmin or RegExMatch(full_command_line, " /restart(?!\S)"))
+{
+	try
+		Run '*RunAs "' A_ScriptFullPath '" /restart'
+	ExitApp
+}
+
+;=== Check autorun
+funcCheckAutorun()
+funcCheckAutorun(*) {
+	Global
+	DetectHiddenWindows True
+	A_Clipboard := ""
+	Run A_Comspec " /c schtasks /tn `"AHK Gadget Elevated`" `| clip",,"Hide"
+	WinWait(A_Comspec,,2)
+	WinWaitClose ,,2
+	If NOT (A_Clipboard = "")
+		varAutorunStatus := True
+	Else
+		varAutorunStatus := False
+	A_Clipboard := ""
+	DetectHiddenWindows False
+}
+
+;=== Run things unelevated, varUnelevatedTarget must be full path
+funcRunUnelevated(varUnelevatedTarget) {
+	DllCall("wdc.dll\WdcRunTaskAsInteractiveUser", "wstr", "rundll32.exe shell32.dll,ShellExec_RunDLL " varUnelevatedTarget, "wstr", A_ScriptDir, "int", 0x27)
+}
+
+;=== Disable hotkey. You will need to click the tray to enable it again
+Hotkey IniRead(settingsPath,"Hotkey","ToggleAdminScript"), hotkeyToggleAdminScript
+hotkeyToggleAdminScript(*)
+{
+	Suspend "-1"
+	Pause "-1"
+	TraySetIcon varIconSuspend
+	A_IconTip := varIconTipSuspend
+	SoundPlay "Resources/Ding3.wav"
+	A_TrayMenu.unCheck("Enabled")
+}
+;=== Recompile, it's usually overriden by the normal script
+Hotkey IniRead(settingsPath,"Hotkey","RecompileScript"), hotkeyRecompileScript
+hotkeyRecompileScript(*) {
+	Run varCompiler
+}
+;=== Open dir, doesn't matter the priority
+Hotkey IniRead(settingsPath,"Hotkey","OpenScriptDirectory"), hotkeyOpenScriptDirectory
+hotkeyOpenScriptDirectory(*) {
+	Run A_ScriptDir
+}
+
+A_TrayMenu.Delete()
+
+A_TrayMenu.Add("Gadget: Elevated", trayOpen)
+A_TrayMenu.Add()
+A_TrayMenu.Add("Enabled", traySuspend)
+A_TrayMenu.Add("Reload", trayReload)
+A_TrayMenu.Add("Recompile", trayRecompile)
+A_TrayMenu.Add("Open Log", trayOpen)
+A_TrayMenu.Add()
+A_TrayMenu.Add("Run at Start", trayAutorun)
+A_TrayMenu.Add()
+A_TrayMenu.Add("Script Directory", trayScriptDir)
+A_TrayMenu.Add("Exit", trayExit)
+
+traySuspend(ItemName, ItemPos, myMenu) {
+	Suspend "-1"
+	Pause "-1"
+	If (A_IsSuspended = "1") {
+		TraySetIcon varIconSuspend
+		A_IconTip := varIconTipSuspend
+		myMenu.unCheck("Enabled")
+	}
+	Else {
+		TraySetIcon varIconNormal
+		A_IconTip := varIconTipNormal
+		myMenu.Check("Enabled")
+	}
+}
+trayReload(ItemName, ItemPos, myMenu) {
+	Reload
+}
+trayRecompile(ItemName, ItemPos, myMenu) {
+	funcRunUnelevated(varCompiler)
+}
+trayOpen(ItemName, ItemPos, myMenu) {
+	ListLines
+}
+trayAutorun(ItemName, ItemPos, myMenu) {
+	If varAutorunStatus = False {
+		Run "powershell -ExecutionPolicy Bypass -file `"Resources/task-scheduler-create.ps1`""
+		WinWait("ahk_class ConsoleWindowClass",,3)
+		WinWaitClose
+		funcCheckAutorun() ;check if it succeed
+		If varAutorunStatus = True
+			myMenu.Check("Run at Start")
+	}
+	Else {
+		Run "powershell -ExecutionPolicy Bypass -file `"Resources/task-scheduler-remove.ps1`""
+		WinWait("ahk_class ConsoleWindowClass",,3)
+		WinWaitClose
+		funcCheckAutorun() ;check if it succeed
+		If varAutorunStatus = False
+			myMenu.unCheck("Run at Start")
+	}	
+}
+trayScriptDir(ItemName, ItemPos, myMenu) {
+	Run A_ScriptDir
+}
+trayExit(ItemName, ItemPos, myMenu) {
+	ExitApp
+}
+A_TrayMenu.Default := "Enabled"
+A_TrayMenu.Check("Enabled")
+A_TrayMenu.Disable("Gadget: Elevated")
+If varAutorunStatus = True
+	A_TrayMenu.Check("Run at Start")
+	

@@ -1,0 +1,97 @@
+;=== Config
+;=== Wow, writting v1 is actually annoying and looks confusing
+#NoEnv
+#SingleInstance Force
+SetWorkingDir %A_ScriptDir%
+#include %A_ScriptDir%/Modules/Version1/Lib/VA.ahk
+IniRead, varIconNormal, %settingsPath%, Tray, LegacyIcon
+IniRead, varIconSuspend, %settingsPath%, Tray, LegacyIconDisabled
+IniRead, varIconTipNormal, %settingsPath%, Tray, LegacyTooltip
+IniRead, varIconTipSuspend, %settingsPath%, Tray, LegacyTooltipDisabled
+varAutorun := A_AppData . "/Microsoft/Windows/Start Menu/Programs/Startup/Nitori Gadget Legacy.lnk"
+varAutorunIcon := A_ScriptDir . "/" . varIconNormal
+Menu, Tray, Icon, %varIconNormal%, , 1
+Menu, Tray, Tip, %varIconTipNormal%
+
+;=== Hotkeys
+IniRead, hotkeyLegacyScript, %settingsPath%, Hotkey, ToggleLegacyScript
+IniRead, hotkeyOpenScript, %settingsPath%, Hotkey, OpenScriptDirectory
+IniRead, hotkeyRecompile, %settingsPath%, Hotkey, RecompileScript
+Hotkey, %hotkeyLegacyScript%, traySuspend ; Reuse label as function, it's the same command
+Hotkey, %hotkeyRecompile%, trayRecompile
+Hotkey, %hotkeyOpenScript%, functionOpenDir
+
+;=== Menu customization
+Menu, Tray, NoStandard
+
+Menu, Tray, Add, Gadget: Legacy, trayOpen
+Menu, Tray, Disable, Gadget: Legacy
+Menu, Tray, Add
+Menu, Tray, Add, Enabled, traySuspend
+Menu, Tray, Default, Enabled
+Menu, Tray, Check, Enabled ; check it immediately
+varScriptEnabled := true ; uhh we can't find how to check menu value so we make our own
+Menu, Tray, Add, Reload, trayReload
+Menu, Tray, Add, Recompile, trayRecompile
+Menu, Tray, Add, Open Log, trayOpen
+Menu, Tray, Add
+Menu, Tray, Add, Run at Start, trayAutorun
+If FileExist(varAutorun)
+	Menu, Tray, Check, Run at Start
+Menu, Tray, Add
+Menu, Tray, Add, Script Directory, trayDirectory
+Menu, Tray, Add, Exit, trayExit
+
+; Skip hotkey label, yeah we have to do it like this so the script continue without reading the commands
+Goto, labelCoreEnd
+
+traySuspend:
+	If (varScriptEnabled = true) {
+		Menu, Tray, unCheck, Enabled
+		Menu, Tray, Icon, %varIconSuspend%, , 1
+		Menu, Tray, Tip, %varIconTipSuspend%
+		varScriptEnabled := false
+		Suspend, Toggle
+		Pause, Toggle
+		Return
+	}
+	Else {
+		Menu, Tray, Check, Enabled
+		Menu, Tray, Icon, %varIconNormal%, , 1
+		Menu, Tray, Tip, %varIconTipNormal%
+		varScriptEnabled := true
+		Suspend, Toggle
+		Pause, Toggle
+		Return
+	}
+trayReload:
+	Reload
+	Return
+trayRecompile:
+	Run %varCompiler%
+	Return
+trayOpen:
+	ListLines 
+	Return
+trayAutorun:
+	If FileExist(varAutorun) {
+		FileDelete, %varAutorun%
+		Menu, Tray, UnCheck, Run at Start
+	}
+	Else {
+		FileCreateShortcut, %A_ScriptFullPath%, %varAutorun%,,,, %varAutorunIcon%,, 1
+		Menu, Tray, Check, Run at Start
+	}
+	Return
+trayDirectory:
+	Run %A_ScriptDir%
+	Return
+trayExit:
+	ExitApp
+
+;=== Hotkey function. It uses label unlike v2
+functionOpenDir:
+	Run %A_ScriptDir%
+	Return
+
+labelCoreEnd:

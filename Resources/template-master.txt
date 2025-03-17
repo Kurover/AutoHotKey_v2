@@ -1,0 +1,70 @@
+﻿;AutoGUI creator: Alguimist autohotkey.com/boards/viewtopic.php?f=64&t=89901
+;AHKv2converter creator: github.com/mmikeww/AHK-v2-script-converter
+;EasyAutoGUI-AHKv2 github.com/samfisherirl/Easy-Auto-GUI-for-AHK-v2
+
+;=== Yeah, we used tools to create the GUI
+;=== We are NOT reading anymore doc files!
+
+myGui := Constructor()
+myGui.Show("w368 h111")
+
+Constructor()
+{	
+	myGui := Gui()
+	myGui.Title := "Template Producer"
+	myGui.Opt("-MinimizeBox -MaximizeBox")
+	myGui.OnEvent('Close', (*) => ExitApp())
+	ButtonBtnCreate := myGui.Add("Button", "vBtnCreate x8 y72 w178 h31 +Default", "&Create")
+	ButtonBtnCreate.OnEvent("Click", funcCreate)
+	ButtonBtnCreateExample := myGui.Add("Button", "vBtnCreateExample x192 y72 w80 h31", "&Example")
+	ButtonBtnCreateExample.OnEvent("Click", funcCreateExample)
+	BtnLuckyButton := myGui.Add("Button", "vBtnLuckyButton x280 y72 w80 h31", "&Lucky Button")
+	BtnLuckyButton.OnEvent("Click", funcLucky)
+	defaultTxt := "Name your script. No weird characters allowed!"
+	illegalTxt := "No, no, no! Clean up your writing!"
+	TextTxt := myGui.Add("Text", "vTxt x8 y8 w352 h23 +Border +Center +0x200", defaultTxt)
+	
+	Edit1 := myGui.Add("Edit", "x8 y40 w352 h21")
+	Edit1.OnEvent("Change", funcCheckIllegal)
+
+	funcCheckIllegal(*) {
+		txtContent := Edit1.Value
+		If (txtContent ~= "^ | +\..{3,4}$|[\\\/:*?`"<>|]")
+			TextTxt.Text := illegalTxt
+		Else
+			TextTxt.Text := defaultTxt
+	}
+	funcCreate(*) {
+		varFile := Edit1.Value 
+		If (varFile = "")
+			varFile := "New Script" 
+		varFile := varFile ".ahk" 
+		If FileExist(varFile) 
+		{ 
+			MsgBox "You cucumber, file already exist!", "Try again" 
+			Return 
+		} 
+		FileCopy rootDir "/Resources/script-template.txt", varFile 
+		Run "notepad `"" varFile "`"" 
+		ExitApp
+	}
+	funcCreateExample(*) {
+		varFile := Edit1.Value 
+		If (varFile = "")
+			varFile := "New Example" 
+		varFile := varFile ".ahk" 
+		If FileExist(varFile)
+		{ 
+			MsgBox "Class already exist!", "Try again" 
+			Return
+		} 
+		FileCopy rootDir "/Resources/script-example.txt", varFile
+		Run "notepad `"" varFile "`"" 
+		ExitApp
+	}
+	funcLucky(*) {
+		SoundPlay rootDir "/Resources/Ding1.wav"
+		Return
+	}
+	return myGui
+}

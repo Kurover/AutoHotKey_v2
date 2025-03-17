@@ -1,0 +1,101 @@
+;=== Config
+;=== Path is assumed on where the "Run-Nitori-Gadget.ahk" directory is
+varIconNormal := IniRead(settingsPath,"Tray","Icon")
+varIconSuspend := IniRead(settingsPath,"Tray","IconDisabled")
+varIconTipNormal := IniRead(settingsPath,"Tray","Tooltip")
+varIconTipSuspend := IniRead(settingsPath,"Tray","TooltipDisabled")
+varAutorun := A_AppData "/Microsoft/Windows/Start Menu/Programs/Startup/Nitori Gadget.lnk"
+varAutorunIcon := A_ScriptDir "/" varIconNormal
+TraySetIcon(varIconNormal,,true)
+A_IconTip := varIconTipNormal
+
+;=== Disable hotkey. You will need to click the tray to enable it again
+Hotkey IniRead(settingsPath,"Hotkey","ToggleMainScript"), hotkeyToggleMainScript
+hotkeyToggleMainScript(*)
+{
+	Suspend "-1" ; explanation below
+	Pause "-1"
+	TraySetIcon varIconSuspend
+	A_IconTip := varIconTipSuspend
+	A_TrayMenu.unCheck("Enabled")
+	SoundPlay "Resources/Ding3.wav"
+}
+	
+;=== Recompile the scripts
+Hotkey IniRead(settingsPath,"Hotkey","RecompileScript"), hotkeyRecompileScript
+hotkeyRecompileScript(*) {
+	Run varCompiler
+}
+;=== Open script folder
+Hotkey IniRead(settingsPath,"Hotkey","OpenScriptDirectory"), hotkeyOpenScriptDirectory
+hotkeyOpenScriptDirectory(*) {
+	Run A_ScriptDir
+}
+
+;=== Taskbar tray menu
+;=== Explanation is minimal here. Please check documentation if you are interested
+
+A_TrayMenu.Delete() ; Remove all default tray menu
+
+; Custom tray GUI, which will run the function associated with if clicked
+A_TrayMenu.Add("Gadget: Main", trayOpen)
+A_TrayMenu.Add()
+A_TrayMenu.Add("Enabled", traySuspend)
+A_TrayMenu.Add("Reload", trayReload)
+A_TrayMenu.Add("Recompile", trayRecompile)
+A_TrayMenu.Add("Open Log", trayOpen)
+A_TrayMenu.Add()
+A_TrayMenu.Add("Run at Start", trayAutorun)
+A_TrayMenu.Add()
+A_TrayMenu.Add("Script Directory", trayScriptDir)
+A_TrayMenu.Add("Exit", trayExit)
+
+;=== Functions
+;=== These only run from the tray menu item list
+
+traySuspend(ItemName, ItemPos, myMenu) {
+	Suspend "-1" ; Suspend all hotkey
+	Pause "-1" ; Pause script thread. The following command will still run until end
+	If (A_IsSuspended = "1") { ; Check if script is disabled
+		TraySetIcon varIconSuspend ; Change the icon to disabled
+		A_IconTip := varIconTipSuspend ; Change tray tooltip hover
+		myMenu.unCheck("Enabled") ; Change the checkmark on tray menu
+	}
+	Else { ; Check if script is enabled
+		TraySetIcon varIconNormal
+		A_IconTip := varIconTipNormal
+		myMenu.Check("Enabled")
+	}
+}
+trayReload(ItemName, ItemPos, myMenu) {
+	Reload
+}
+trayRecompile(ItemName, ItemPos, myMenu) {
+	Run varCompiler
+}
+trayOpen(ItemName, ItemPos, myMenu) {
+	ListLines ; Open the ahk main window
+}
+trayAutorun(ItemName, ItemPos, myMenu) {
+	If FileExist(varAutorun) { ; varAutorun is the shortcut on your startup folder, check if it exist
+		FileDelete varAutorun
+		myMenu.unCheck("Run at Start")
+	}
+	Else {
+		FileCreateShortcut A_ScriptFullPath, varAutorun,,,, varAutorunIcon,, 1 ; Create shortcut so it runs on start. The commas are important yes
+		myMenu.Check("Run at Start")
+	}
+}
+trayScriptDir(ItemName, ItemPos, myMenu) {
+	Run A_ScriptDir
+}
+trayExit(ItemName, ItemPos, myMenu) {
+	ExitApp
+}
+
+;=== End. Below runs normally on script start
+A_TrayMenu.Default := "Enabled" ; This is the default double click command on the tray icon. Pointed to "Enabled" of which calls traySuspend()
+A_TrayMenu.Disable("Gadget: Main")
+A_TrayMenu.Check("Enabled") ; Check the "Enabled" menu. If you run script it's on by default so we assign them without checking it first
+If FileExist(varAutorun) ; Check if autorun is "enabled" via file existence. You can disable it on taskbar autorun and the file will be there so yeah, nothing fancy here
+	A_TrayMenu.Check("Run at Start") ; If true, add checkmark

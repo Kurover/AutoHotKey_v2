@@ -1,0 +1,106 @@
+#Requires AutoHotkey v2 ;compileremoveme
+#Include ".include" ;compileremoveme
+
+; If you don't wanna bother creating multiple files, do it like these
+;--------
+; #HotIf WinExist("ahk_exe First.exe")
+; +f::MsgBox "This only active on this program"
+; 
+; #HotIf WinExist("ahk_exe myApp.exe")
+; +f::MsgBox "This only active on this secondary program"
+;--------
+
+; Link hotkey with settings.ini
+; Could be useful if you plan to add a bunch and sometimes forgor what key names are
+;--------
+; Change YOURKEY and VARNAME. Put the combo on settings.ini
+; Hotkey IniRead(settingsPath,"Hotkey","YOURKEY"), VARNAME
+; VARNAME(*) {COMMANDS}
+;--------
+
+; Exist/Active. Active only if focused. Exist if it exist as a window, not process.
+; Use WindowSpy to determine their process name/class
+;--------
+; #HotIf WinExist("ahk_exe notepad.exe")
+; 	WinNotActive("")
+; 	WinActive("")
+; 	WinNotExist("")
+; 
+;	ProcessExist("notepad.exe") ; Not recommended, very spammy and is bad for performance (it checks ALL process everytime you click hotkey). Use this on regular if hotkey instead.
+;--------
+
+; Key state sensitive setting
+;--------
+; If GetKeyState("CapsLock", "T")
+; If GetKeyState("ScrollLock", "T")
+; If GetKeyState("NumLock", "T")
+; 
+; Example
+; If GetKeyState("CapsLock", "T") {
+;	+f::your_command	
+; }
+
+; Send commands
+;--------
+; Send "abc"
+; SendText "abc" good if you want to exclusively type text
+
+; Cheat Sheet
+;--------
+; + Shift
+; ^ Ctrl | # Win | ! Alt | >! R.Alt | >+ R.Shift
+
+;                    |  WheelUp  |
+; XButton2 | LButton |  MButton  | RButton |
+; XButton1 |         | WheelDown |
+
+; ~ Execute on press // ~#f::
+; UP Execute on release // #f UP::
+; & Combo, but disable the first native key, check docs
+
+;--------
+; START HERE!
+;--------
+; This check
+#HotIf WinExist("ahk_exe notepad++.exe")
+; Put your hotkey below
+
++a::Send "yourmail.com"
++s::Send "^v"
++d::SendText "^v"
++f::SendText "`"^v`" double quote need tilde"
++g::
+{
+	A_Clipboard := "use clipboard to type instead, faster especially in website that tracks your typing. It eats your clipboard though, goodbye to your image snippet (unless you use clipboard history)"
+	Send "^v"
+}
++h::
+{
+	If GetKeyState("CapsLock", "T") {
+		MsgBox "Capslock is ON, yay!"
+	}
+	Else
+		MsgBox "Capslock is OFF"
+}
++q::
++w::MsgBox "q and w does the same if you do this"
++=:: MsgBox "This is shift plus"
+; linked to settings, you must create the key there too
+; "Hotkey" is the category. "Test" is the key name
+; "hotkeyTest" is the variable name, up to you.
+; "(HotkeyName)" is function to be called but don't worry about it.
+;	You can put asterisk "*" instead
+; This key is Shift+j by default
+; Hotkey command does not respect #HotIf, but they do respect HotIfWinXXX.
+HotIfWinActive "ahk_exe notepad++.exe"
+Hotkey IniRead(settingsPath,"Hotkey","Test"), hotkeyTest
+hotkeyTest(HotkeyName) {
+	msgbox "mykey is " HotkeyName
+}
+HotIfWinActive
+
+; Unset the hotif so the next script doesn't have the same attribute
+; Unless they start with hotif of their own.
+
+#HotIf
+

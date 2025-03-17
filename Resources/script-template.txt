@@ -1,0 +1,32 @@
+#Requires AutoHotkey v2 ;compileremoveme
+#Include ".include" ;compileremoveme
+
+; WinExist("") | WinActive("")
+; If GetKeyState("CapsLock", "T") | ScrollLock | NumLock
+; Send "" | SendText "" 
+
+; + Shift
+; ^ Ctrl | # Win | ! Alt | >! R.Alt | >+ R.Shift
+
+;                    |  WheelUp  |
+; XButton2 | LButton |  MButton  | RButton |
+; XButton1 |         | WheelDown |
+
+; ~ Execute on press // ~#f::
+; UP Execute on release // #f UP::
+; & Combo, but disable the first native key, check docs
+
+; this hotif only for KEY::
+#HotIf WinActive("ahk_exe notepad++.exe")
++a::Send "yourmail.com"
+#HotIf
+; OR
+
+; this hotif only for Hotkey
+HotIfWinActive "ahk_exe notepad++.exe"
+Hotkey IniRead(settingsPath,"Hotkey","CHANGEME"), hotkeyCHANGEME
+hotkeyCHANGEME(*) {
+	msgbox "Command here"
+}
+HotIfWinActive
+
