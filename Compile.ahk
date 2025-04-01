@@ -6,6 +6,13 @@ DetectHiddenWindows true
 
 rootDir := A_ScriptDir
 settingsPath := A_ScriptDir "/settings.ini"
+settingsPathDefault := A_ScriptDir "/settings_default.ini"
+
+If NOT FileExist(settingsPath) {
+	FileCopy settingsPathDefault, settingsPath
+	Sleep 500
+	}
+
 resourcesDir := A_ScriptDir "/Resources"
 
 varIncludeName := ".include"
@@ -134,6 +141,37 @@ If (varCompileLegacy = "true") {
 }
 
 ;=== Post function
+
+;=== Initialize settings.ini
+;=== Will add any new line if any
+funcSettings(*) {
+	oldSettings := FileRead(settingsPath)
+	finalSettings := oldSettings
+	Loop Read, "settings_default.ini" {
+		If (A_LoopReadLine ~= "[[]") {
+			currentCategory := A_LoopReadLine
+			Continue
+		}
+		Else If (A_LoopReadLine ~= "=") {
+			nameLength := RegExMatch(A_LoopReadLine, " ") - 1
+			nameValue := SubStr(A_LoopReadLine, 1, nameLength)
+			newKey := inStr(finalSettings, nameValue) ; return 0 if it's new
+			If (newKey = "0") {
+				nameFullValue := SubStr(A_LoopReadLine, 1)
+				;msgbox nameValue " in " currentCategory " | " inStr(finalSettings, nameValue)
+				;msgbox "Inserting | " nameFullValue
+				finalSettings := strReplace(finalSettings, currentCategory, currentCategory "`n" nameFullValue)
+			}
+		}
+	}
+	compareSettings := StrCompare(oldSettings, finalSettings) ; If no difference, return 0
+	;msgbox compareSettings
+	If (compareSettings = "0")
+		Return
+	FileDelete settingsPath
+	FileAppend finalSettings, settingsPath
+}
+funcSettings()
 
 ;=== Add working dir variable to root path so every module script has this data
 ;=== This allow us to simulate script to be run as compiled together
