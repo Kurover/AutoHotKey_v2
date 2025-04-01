@@ -1,4 +1,6 @@
 # Version History
+## v1.1 01-04-25
+- Add default settings to allow updating settings.ini instead of replacing it on each update. New entry will be on first line of its category.
 ## v1.0 19-03-25
 - Initial release
 
