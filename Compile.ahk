@@ -187,8 +187,14 @@ funcIncluder(fileInclude) {
 	FileAppend "
 	(
 	settingsPath := rootDir "/settings.ini"
-	#Esc::ExitApp
-	#NumpadSub::Reload
+	Hotkey IniRead(settingsPath,"Hotkey","ModuleReload"), hotkeyModuleReload
+	hotkeyModuleReload(*) {
+		Reload
+	}
+	Hotkey IniRead(settingsPath,"Hotkey","ModuleExit"), hotkeyModuleExit
+	hotkeyModuleExit(*) {
+		ExitApp
+	}
 	)", fileInclude
 }
 funcIncluderV1(fileInclude) {
@@ -199,7 +205,21 @@ funcIncluderV1(fileInclude) {
 		FileDelete fileInclude
 	}
 	FileAppend 'rootDir := "' A_ScriptDir '"`n', fileInclude
-	FileAppend 'settingsPath := rootDir "/settings.ini"', fileInclude
+	FileAppend 'settingsPath := rootDir "/settings.ini"`n', fileInclude
+	FileAppend "
+	(
+	IniRead, hotkeyModuleReload, %settingsPath%, Hotkey, ModuleReload
+	IniRead, hotkeyModuleExit, %settingsPath%, Hotkey, ModuleExit
+	Hotkey, %hotkeyModuleReload%, labelModuleReload
+	Hotkey, %hotkeyModuleExit%, labelModuleExit
+	Goto includeContinue
+	labelModuleReload:
+	Reload
+	labelModuleExit:
+	ExitApp
+	includeContinue:
+	Sleep 10
+	)", fileInclude
 }
 funcIncluder("Modules/" varIncludeName)
 Loop Files, "Modules/*", "D" {
