@@ -11,12 +11,14 @@ hotkeyPasteLinkRedirect(*)
 {
 	;== Var inside function for a tiny memory optimization
 	;== Where does the script redirect you to. Change in settings.ini
+	varRedirectBilibili := IniRead(settingsPath,"Filter","RedirectBilibili")
 	varRedirectReddit := IniRead(settingsPath,"Filter","RedirectReddit")
 	varRedirectTwitter := IniRead(settingsPath,"Filter","RedirectTwitter")
 	varRedirectYoutube := IniRead(settingsPath,"Filter","RedirectYoutube")
 	;varRedirect★YOURSITE★ := "lo.li"
 	
 	;== Link to check
+	varCheckBilibili := IniRead(settingsPath,"Filter","WhichBilibili")
 	varCheckReddit := IniRead(settingsPath,"Filter","WhichReddit")
 	varCheckTwitter := IniRead(settingsPath,"Filter","WhichTwitter")
 	varCheckYoutube := IniRead(settingsPath,"Filter","WhichYoutube")
@@ -24,7 +26,7 @@ hotkeyPasteLinkRedirect(*)
 
 	;== Link to ignore because there may be text overlap like "fx[twitter.com]"
 	;== Optional and honestly a nothing burger since we don't replace our actual ctrl+v lol, but it's cool
-	varRedirectIgnore := "fxtwitter.com|vxtwitter.com|girlcockx.com|rxddit.com|inv.nadeko.net"
+	varRedirectIgnore := "fxtwitter.com|vxtwitter.com|girlcockx.com|rxddit.com|inv.nadeko.net|vxbilibili.com"
 
 	varOriginalClipboard := A_Clipboard ; = store your original clipboard because we are replacing it for fast paste
 	If (A_Clipboard ~= "i)(" varRedirectIgnore ")") {
@@ -62,6 +64,16 @@ hotkeyPasteLinkRedirect(*)
 	varRedirect := varRedirectReddit
 	If (A_Clipboard ~= "i)(" varCheck ")") {		
 		A_Clipboard := StrReplace(A_Clipboard, varCheck, varRedirect)				
+		Goto PasteRedirect
+	}
+	
+	;== Bilibili
+	varCheck := varCheckBilibili
+	varRedirect := varRedirectBilibili
+	If (A_Clipboard ~= "i)(" varCheck ")") {	
+		If (A_Clipboard ~= "i)/?")
+			varLinkClean := RegExReplace(A_Clipboard, "\/\?.+") ; Remove tracking link
+		A_Clipboard := StrReplace(varLinkClean, varCheck, varRedirect)				
 		Goto PasteRedirect
 	}
 		
