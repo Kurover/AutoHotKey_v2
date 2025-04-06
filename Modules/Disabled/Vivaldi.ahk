@@ -6,3 +6,4 @@
 
 #HotIf WinActive("ahk_exe vivaldi.exe")
 XButton2:: hotkeyGalleryDLRunAuto()
+#HotIf
