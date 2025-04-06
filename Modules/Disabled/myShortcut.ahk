@@ -17,12 +17,10 @@
 }
 
 ;=== Paste image clipboard to image viewer
-;= Win + V
-#v:: {
-	Run "C:\Program Files\XnViewMP\xnviewmp.exe"
+;= Ctrl + Alt + V
+!^v:: {
+	Run "C:\Program Files\XnViewMP\xnviewmp.exe -clipaste"
 	WinWait("ahk_exe xnviewmp.exe")
 	WinActivate
-	Sleep 150
-	Send "^+v"
 	Return
 }
