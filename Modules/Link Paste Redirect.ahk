@@ -31,7 +31,6 @@ hotkeyPasteLinkRedirect(*)
 	varOriginalClipboard := A_Clipboard ; = store your original clipboard because we are replacing it for fast paste
 	If (A_Clipboard ~= "i)(" varRedirectIgnore ")") {
 		Send "^v"
-		varOriginalClipboard := ""
 		Return
 	}
 	
@@ -88,6 +87,9 @@ hotkeyPasteLinkRedirect(*)
 ;		}
 	;### END
 	
+	ToolTip "Nothing to convert"
+	SetTimer () => ToolTip(), -1250 ;=== Kill tooltip after 1.25s
+	Send "^v"
 	Return
 	
 	PasteRedirect:
