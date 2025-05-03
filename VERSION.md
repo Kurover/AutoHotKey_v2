@@ -1,4 +1,7 @@
 # Version History
+## v1.3 04-05-25
+- Add ShareX filename counter reset
+- Add Link paste redirect clone
 ## v1.2 06-04-25
 - Add bilibili to link paste redirect
 - Change default hotkey for link paste redirect to Win + V
