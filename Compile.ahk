@@ -3,6 +3,7 @@
 SetWorkingDir A_ScriptDir
 TraySetIcon("Resources/ahk-icon16_2.ico",,true)
 DetectHiddenWindows true
+FileEncoding "UTF-8"
 
 rootDir := A_ScriptDir
 settingsPath := A_ScriptDir "/settings.ini"
