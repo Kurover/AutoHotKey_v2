@@ -1,4 +1,8 @@
 # Version History
+## v1.3 17-09-25
+- Add YouTube Clipper, WIP
+- Add Instagram and Facebook redirect
+- Add 6 digit converter
 ## v1.3 04-05-25
 - Add ShareX filename counter reset
 - Add Link paste redirect clone
