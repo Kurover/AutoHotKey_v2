@@ -3,7 +3,9 @@
 AHK scripts with compiler setup. Mainly for v2 and has limited support for v1. These are made for myself at first, to discover what I can do with AHK, but I decided to share it and definitely because I didn't lose my scripts due to HDD failure with no backup, yes.
 
 ## What is This?
-You may notice the comments inside the file use 3rd person noun like "we" "our". TLDR it's a roleplay. That's because it's primarily directed for a group of mine to explain or teach them what any of these text doing there. The "person" who's explaining it is a mob character from Touhou Project universe, the kappas. They have relatively advanced technology and the script / modules in this repository are their "gadget" that they are making. It's only relevant with the separate, non-public, writings that goes along with it.
+On the surface, it's a bunch of script that does its own thing once it's called via hotkey.
+
+You may notice the comments inside the file use 3rd person noun like "we" "our". TLDR it's a roleplay. This whole shenanigan is primarily directed for a group of mine to explain or teach them what any of these text doing there. The "person" who's explaining it is a mob character from Touhou Project universe, the kappas. They have relatively advanced technology and the script / modules in this repository are their "gadget" that they are making. It's only relevant with the separate, non-public, writings that goes along with it.
 
 ## Credits
 ### Graphics
@@ -12,6 +14,8 @@ You may notice the comments inside the file use 3rd person noun like "we" "our".
 ### Scripts used/modified in this project
 - Lexikos / G33kDude [Vista Audio Control](https://github.com/ahkscript/VistaAudio?tab=License-1-ov-file) and [Volume.ahk](https://gist.github.com/G33kDude/5b7ba418e685e52c3e6507e5c6972959). Add custom hotkey and remove global audio control function.
 - lblb's [Cursor Highlighter](https://www.autohotkey.com/boards/viewtopic.php?f=6&t=78701). Stripped down to only include picture on cursor functionality and no GUI. Ctrl + P to terminate by default.
+
+If you are the owner of the script and don't want it redistributed here, contact me and I will squash it ASAP.
 
 ### Related Software
 Optional and relevant script is disabled by default. Install these yourself.
