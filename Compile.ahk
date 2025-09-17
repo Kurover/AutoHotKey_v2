@@ -1,18 +1,18 @@
-#Requires AutoHotkey v2
+﻿#Requires AutoHotkey v2
 #SingleInstance Force
 SetWorkingDir A_ScriptDir
 TraySetIcon("Resources/ahk-icon16_2.ico",,true)
 DetectHiddenWindows true
-FileEncoding "UTF-8"
+FileEncoding "UTF-8-RAW"
 
 rootDir := A_ScriptDir
 settingsPath := A_ScriptDir "/settings.ini"
 settingsPathDefault := A_ScriptDir "/settings_default.ini"
 
-If NOT FileExist(settingsPath) {
+If !FileExist(settingsPath) {
 	FileCopy settingsPathDefault, settingsPath
 	Sleep 500
-	}
+}
 
 resourcesDir := A_ScriptDir "/Resources"
 
