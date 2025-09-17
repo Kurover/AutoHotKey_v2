@@ -148,20 +148,25 @@ If (varCompileLegacy = "true") {
 funcSettings(*) {
 	oldSettings := FileRead(settingsPath)
 	finalSettings := oldSettings
+
 	Loop Read, "settings_default.ini" {
 		If (A_LoopReadLine ~= "[[]") {
 			currentCategory := A_LoopReadLine
+			categoryValue := SubStr(A_LoopReadLine, 1)
+			categoryIsNew := inStr(finalSettings, categoryValue) ; return 0 if it's new
+			If (categoryIsNew = "0")
+				finalSettings := strReplace(finalSettings, "[Compiler]", "`r`n" categoryValue "`r`n" "[Compiler]")
 			Continue
 		}
 		Else If (A_LoopReadLine ~= "=") {
 			nameLength := RegExMatch(A_LoopReadLine, " ") - 1
-			nameValue := SubStr(A_LoopReadLine, 1, nameLength)
-			newKey := inStr(finalSettings, nameValue) ; return 0 if it's new
-			If (newKey = "0") {
+			keyValue := SubStr(A_LoopReadLine, 1, nameLength)
+			keyIsNew := inStr(finalSettings, keyValue) ; return 0 if it's new
+			If (keyIsNew = "0") {
 				nameFullValue := SubStr(A_LoopReadLine, 1)
-				;msgbox nameValue " in " currentCategory " | " inStr(finalSettings, nameValue)
+				;msgbox keyValue " in " currentCategory " | " inStr(finalSettings, keyValue)
 				;msgbox "Inserting | " nameFullValue
-				finalSettings := strReplace(finalSettings, currentCategory, currentCategory "`n" nameFullValue)
+				finalSettings := strReplace(finalSettings, currentCategory, currentCategory "`r`n" nameFullValue)
 			}
 		}
 	}
