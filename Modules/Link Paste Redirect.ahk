@@ -15,13 +15,21 @@ hotkeyPasteLinkRedirect(*)
 	varRedirectReddit := IniRead(settingsPath,"Filter","RedirectReddit")
 	varRedirectTwitter := IniRead(settingsPath,"Filter","RedirectTwitter")
 	varRedirectYoutube := IniRead(settingsPath,"Filter","RedirectYoutube")
+	varRedirectInstagram := IniRead(settingsPath,"Filter","RedirectInstagram")
+	varRedirectFacebook := IniRead(settingsPath,"Filter","RedirectFacebook")
+	;varRedirectX := IniRead(settingsPath,"Filter","RedirectX")
 	;varRedirect★YOURSITE★ := "lo.li"
+	
+	varRedirect6digit := IniRead(settingsPath,"Filter","Redirect6digitSite")
 	
 	;== Link to check
 	varCheckBilibili := IniRead(settingsPath,"Filter","WhichBilibili")
 	varCheckReddit := IniRead(settingsPath,"Filter","WhichReddit")
 	varCheckTwitter := IniRead(settingsPath,"Filter","WhichTwitter")
 	varCheckYoutube := IniRead(settingsPath,"Filter","WhichYoutube")
+	varCheckInstagram := IniRead(settingsPath,"Filter","WhichInstagram")
+	varCheckFacebook := IniRead(settingsPath,"Filter","WhichFacebook")
+	;varCheckX := IniRead(settingsPath,"Filter","WhichX")
 	;varCheck★YOURSITE★ := "hag.com"
 
 	;== Link to ignore because there may be text overlap like "fx[twitter.com]"
@@ -31,6 +39,8 @@ hotkeyPasteLinkRedirect(*)
 	varOriginalClipboard := A_Clipboard ; = store your original clipboard because we are replacing it for fast paste
 	If (A_Clipboard ~= "i)(" varRedirectIgnore ")") {
 		Send "^v"
+		ToolTip "Already converted, pasting normally."
+		SetTimer () => ToolTip(), -1250 ;=== Kill tooltip after 1.25s
 		Return
 	}
 	
@@ -74,6 +84,22 @@ hotkeyPasteLinkRedirect(*)
 		Goto PasteRedirect
 	}
 	
+	;== Facebook
+	varCheck := varCheckFacebook
+	varRedirect := varRedirectFacebook
+	If (A_Clipboard ~= "i)(" varCheck ")") {		
+		A_Clipboard := StrReplace(A_Clipboard, varCheck, varRedirect)				
+		Goto PasteRedirect
+	}
+	
+	;== Instagram
+	varCheck := varCheckInstagram
+	varRedirect := varRedirectInstagram
+	If (A_Clipboard ~= "i)(" varCheck ")") {		
+		A_Clipboard := StrReplace(A_Clipboard, varCheck, varRedirect)				
+		Goto PasteRedirect
+	}
+	
 	;== Bilibili
 	varCheck := varCheckBilibili
 	varRedirect := varRedirectBilibili
@@ -81,6 +107,14 @@ hotkeyPasteLinkRedirect(*)
 		If (A_Clipboard ~= "i)/?")
 			varLinkClean := RegExReplace(A_Clipboard, "\/\?.+") ; Remove tracking link
 		A_Clipboard := StrReplace(varLinkClean, varCheck, varRedirect)				
+		Goto PasteRedirect
+	}
+	
+	;== 6digitSite convert exactly 6 digit into its link
+	lengthCheck := StrLen(A_Clipboard)
+	If (lengthCheck = 6) {
+		varLinkClean := varRedirect6digit
+		A_Clipboard := StrReplace(varLinkClean, "REPLACEME", varOriginalClipboard)
 		Goto PasteRedirect
 	}
 		

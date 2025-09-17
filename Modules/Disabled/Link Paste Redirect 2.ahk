@@ -12,14 +12,19 @@ hotkeyPasteLinkRedirect2(*)
 	;== Change the "Redirect<site>" and add/match it on config
 	varRedirectBilibili := IniRead(settingsPath,"Filter","RedirectBilibili")
 	varRedirectReddit := IniRead(settingsPath,"Filter","RedirectReddit")
-	varRedirectTwitter := IniRead(settingsPath,"Filter","RedirectTwitter2")
+	varRedirectTwitter := IniRead(settingsPath,"Filter","RedirectTwitter")
 	varRedirectYoutube := IniRead(settingsPath,"Filter","RedirectYoutube")
+	varRedirectInstagram := IniRead(settingsPath,"Filter","RedirectInstagram")
+	varRedirectFacebook := IniRead(settingsPath,"Filter","RedirectFacebook")
+	varRedirect6digit := IniRead(settingsPath,"Filter","Redirect6digitSite")
 	
 	;== Link to check, should be the same as the first
 	varCheckBilibili := IniRead(settingsPath,"Filter","WhichBilibili")
 	varCheckReddit := IniRead(settingsPath,"Filter","WhichReddit")
 	varCheckTwitter := IniRead(settingsPath,"Filter","WhichTwitter")
 	varCheckYoutube := IniRead(settingsPath,"Filter","WhichYoutube")
+	varCheckInstagram := IniRead(settingsPath,"Filter","WhichInstagram")
+	varCheckFacebook := IniRead(settingsPath,"Filter","WhichFacebook")
 
 	varOriginalClipboard := A_Clipboard
 
@@ -55,6 +60,22 @@ hotkeyPasteLinkRedirect2(*)
 		Goto PasteRedirect
 	}
 	
+	;== Facebook
+	varCheck := varCheckFacebook
+	varRedirect := varRedirectFacebook
+	If (A_Clipboard ~= "i)(" varCheck ")") {		
+		A_Clipboard := StrReplace(A_Clipboard, varCheck, varRedirect)				
+		Goto PasteRedirect
+	}
+	
+	;== Instagram
+	varCheck := varCheckInstagram
+	varRedirect := varRedirectInstagram
+	If (A_Clipboard ~= "i)(" varCheck ")") {		
+		A_Clipboard := StrReplace(A_Clipboard, varCheck, varRedirect)				
+		Goto PasteRedirect
+	}
+	
 	;== Bilibili
 	varCheck := varCheckBilibili
 	varRedirect := varRedirectBilibili
@@ -62,6 +83,14 @@ hotkeyPasteLinkRedirect2(*)
 		If (A_Clipboard ~= "i)/?")
 			varLinkClean := RegExReplace(A_Clipboard, "\/\?.+") ; Remove tracking link
 		A_Clipboard := StrReplace(varLinkClean, varCheck, varRedirect)				
+		Goto PasteRedirect
+	}
+	
+	;== 6digitSite
+	lengthCheck := StrLen(A_Clipboard)
+	If (lengthCheck = 6) {
+		varLinkClean := varRedirect6digit
+		A_Clipboard := StrReplace(varLinkClean, "REPLACEME", varOriginalClipboard)
 		Goto PasteRedirect
 	}
 	
