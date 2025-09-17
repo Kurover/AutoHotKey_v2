@@ -32,7 +32,7 @@ Hotkey IniRead(settingsPath,"Hotkey","RunCalculator"), hotkeyRunCalculator
 hotkeyRunCalculator(*)
 {
 	If WinExist("Calculator") {
-		Run "calc.exe"
+		Run "notepad.exe"
 		Return
 	}
 	Run "calc.exe"
