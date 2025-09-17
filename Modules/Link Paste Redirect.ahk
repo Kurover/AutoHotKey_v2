@@ -50,6 +50,14 @@ hotkeyPasteLinkRedirect(*)
 	varCheck := varCheckYoutube
 	varRedirect := varRedirectYoutube
 	If (A_Clipboard ~= "i)(" varCheck ")") {
+		If (A_Clipboard ~= "youtube.com/shorts") {
+			ToolTip "YT Shorts detected. Unshortening instead"
+			SetTimer () => ToolTip(), -1250 ;=== Kill tooltip after 1.25s
+			varLinkClean := StrReplace(A_Clipboard, "?feature=share") ; Remove tracking link ("?feature=share")
+			varLinkClean := StrReplace(varLinkClean, "shorts/", "watch?v=") ; Remove tracking link ("?feature=share")
+			A_Clipboard := varLinkClean
+			Goto PasteRedirect
+		}
 		Loop Parse, varCheck, "|"{
 			If (A_Clipboard ~= A_LoopField) {
 				A_Clipboard := StrReplace(A_Clipboard, A_LoopField, varRedirect)				
