@@ -111,10 +111,11 @@ hotkeyPasteLinkRedirect(*)
 	}
 	
 	;== 6digitSite convert exactly 6 digit into its link
-	lengthCheck := StrLen(A_Clipboard)
+	linkCheck6digit := Trim(varOriginalClipboard, "`n `t")
+	lengthCheck := StrLen(linkCheck6digit)
 	If (lengthCheck = 6) {
 		varLinkClean := varRedirect6digit
-		A_Clipboard := StrReplace(varLinkClean, "REPLACEME", varOriginalClipboard)
+		A_Clipboard := StrReplace(varLinkClean, "REPLACEME", linkCheck6digit)
 		Goto PasteRedirect
 	}
 		
