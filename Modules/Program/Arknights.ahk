@@ -1,10 +1,9 @@
 #Requires AutoHotkey v2 ;compileremoveme
 #Include ".include" ;compileremoveme
 
-;=== Back button into escape. This is for Arknights lol
-;=== Rename WinActive target or your emulator window name if it's different
-;=== Great for global "back" button too in most apps
-#HotIf WinActive("Arknights")
+;=== Arknights on emulator. Tested on MuMu, Gplay, and LDPlayer.
+;=== You can rename "ahk_exe MuMuNxDevice.exe" to direct window title "Arknights" if you name your instance that. It might be active if other window has the same name though.
+#HotIf WinActive("ahk_exe MuMuNxDevice.exe")
 ~XButton1:: Send "{Esc}"
 ~XButton2:: ; Click on operator to lock camera to them
 {
