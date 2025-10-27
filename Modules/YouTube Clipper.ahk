@@ -31,6 +31,7 @@ GUIEzDL() {
 	}
 
 	ezdlGui := Gui()
+	ezdlGui.Opt("-MinimizeBox -MaximizeBox +AlwaysOnTop")
 	ezdlGui.Title := "EzDownloadSections"
 	ButtonDownload := ezdlGui.Add("Button", "x8 y104 w141 h31", "&Download")
 	ButtonCopy := ezdlGui.Add("Button", "x152 y104 w102 h31", "&Copy Command")
