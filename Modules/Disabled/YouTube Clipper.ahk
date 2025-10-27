@@ -78,7 +78,7 @@ GUIEzDL() {
 	funcLinkDecoder(*) {
 		global linkSource := Edit1.Value
 		If !(linkSource ~= "http|youtu.be|.com|www.") {
-			MsgBox "No links detected?"
+			MsgBox "No links detected?", "Ermm..", 0x1000
 			Return
 		}
 		
@@ -91,7 +91,7 @@ GUIEzDL() {
 				timestamp2Pos := InStr(Edit2.Value, "`?t=")
 				timestamp2 := SubStr(Edit2.Value, timestamp2Pos + 3)
 				If (timestamp1 > timestamp2) {
-					MsgBox "The start link's timestamp is larger than the end. Fortunately for you, we are smarter. Continuing~"	
+					MsgBox "The start link's timestamp is larger than the end. Fortunately for you, we are smarter. Continuing~",,0x1000
 					timestamp0 := timestamp1
 					timestamp1 := timestamp2
 					timestamp2 := timestamp0
