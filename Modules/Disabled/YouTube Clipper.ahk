@@ -55,7 +55,14 @@ GUIEzDL() {
 	ezdlGui.OnEvent('Close', ezdlGui_close)
 	ezdlGui_close(thisgui) {
 		OnClipboardChange checkClipboard, 0
+		ChangeGUIState()
 		ezdlGui.Destroy
+	}
+	
+	;= Make sure the window can be called again
+	ChangeGUIState(*) {
+		Global
+		programGUIEzDL := 0
 	}
 	
 	;= Clipboard Listener
@@ -159,8 +166,16 @@ GUIEzDL() {
 	Return ezdlGui
 }
 
+;= Function to prevent duplicate window when hotkey is pressed
+programGUIEzDL := 0
+
 Hotkey IniRead(settingsPath,"Hotkey","YoutubeClip"), hotkeyYTClip
 hotkeyYTClip(*) {
-	program := GUIEzDL()
-	program.Show("w368 h144")
+	Global
+	If (programGUIEzDL != 0) {
+		programGUIEzDL.Show("Restore")
+		Return
+	}
+	programGUIEzDL := GUIEzDL()
+	programGUIEzDL.Show("w368 h144")
 }

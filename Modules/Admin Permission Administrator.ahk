@@ -40,7 +40,14 @@ GUIAPA()
 	APAGui.OnEvent('Close', APAGui_close)
 	APAGui_close(thisgui) {
 		OnClipboardChange CheckClipboardAPA, 0
+		ChangeGUIState()
 		APAGui.Destroy
+	}
+	
+	;= Make sure the window can be called again
+	ChangeGUIState(*){
+		Global
+		ProgramAPA := 0
 	}
 	
 	;= Clipboard Listener
@@ -130,8 +137,16 @@ GUIAPA()
 	Return APAGui
 }
 
+;= Function to prevent duplicate window when hotkey is pressed
+programAPA := 0
+
 Hotkey IniRead(settingsPath,"Hotkey","AdminPermission"), hotkeyProgramAPA
 hotkeyProgramAPA(*) {
+	Global
+	If (programAPA != 0) {
+		programAPA.Show("Restore")
+		Return
+	}
 	programAPA := GUIAPA()
 	programAPA.Show("w360 h96")
 }
