@@ -15,9 +15,9 @@ GroupAdd "browser_chrome", "ahk_exe vivaldi.exe"
 
 ;=== Run gallery-dl, downloading link on clipboard
 ;=== If link is youtube or facebook, use yt-dlp interactive mode (-f -)
-varAcceptYTDL := IniRead(settingsPath,"Filter","YTDL")
 Hotkey IniRead(settingsPath,"Hotkey","GalleryDLRun"), hotkeyGalleryDLRun
 hotkeyGalleryDLRun(*) {
+	varAcceptYTDL := IniRead(settingsPath,"Filter","YTDL")
 	If (A_Clipboard ~= "i)(" varAcceptYTDL ")") { ;=== Check if YTDL compatible
 		Run A_Comspec " /c yt-dlp -f - " . A_Clipboard
 		Return
@@ -30,6 +30,7 @@ HotIfWinActive "ahk_group browser"
 Hotkey IniRead(settingsPath,"Hotkey","GalleryDLRunAuto"), hotkeyGalleryDLRunAuto
 HotIfWinActive
 hotkeyGalleryDLRunAuto(*) {
+	varAcceptYTDL := IniRead(settingsPath,"Filter","YTDL")
 	A_Clipboard := "" ;=== Empties clipboard for checks later
 
 	Send "{RButton}"
