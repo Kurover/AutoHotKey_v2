@@ -20,7 +20,7 @@ GUIAPA()
 	APAGui.Opt("-MinimizeBox -MaximizeBox +AlwaysOnTop")
 	APAGui.Title := "Admin Permission Administrator (APA)"
 	APATextStatus := APAGui.Add("Text", "x266 y8 w87 h21 +Border +Center +0x200", "Zzz")
-	Edit1 := APAGui.Add("Edit", "x8 y8 w252 h21", "Program full path (clipboard is monitored)")
+	Edit1 := APAGui.Add("Edit", "x8 y8 w252 h21", "Program full path | CTRL+C a program file")
 	Radio1 := APAGui.AddRadio("x10 y32 w108 h23", "Run as Admin")
 	Radio2 := APAGui.AddRadio("x120 y32 w108 h23 Checked", "Run un-elevated")
 	APASelection := "RunAsInvoker"
@@ -62,7 +62,7 @@ GUIAPA()
 		Try
 			varRegValue := RegRead(varRegPathAPA, Edit1.Value, 0)
 		If (A_LastError = 5) {
-			MsgBox "You have no permission to do this actually :(", "Uh oh..", 0x1000
+			MsgBox "You somehow have no permission to do this actually :(", "Uh oh..", 0x1000
 			ButtonApply.Opt("Disabled")
 			Edit1.Opt("Disabled")
 			OnClipboardChange CheckClipboardAPA, 0

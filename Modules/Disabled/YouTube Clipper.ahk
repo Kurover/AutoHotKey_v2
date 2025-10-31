@@ -35,7 +35,7 @@ GUIEzDL() {
 	ezdlGui.Title := "EzDownloadSections"
 	ButtonDownload := ezdlGui.Add("Button", "x8 y104 w141 h31", "&Download")
 	ButtonCopy := ezdlGui.Add("Button", "x152 y104 w102 h31", "&Copy Command")
-	Edit1 := ezdlGui.Add("Edit", "x48 y8 w310 h21", "'Copy URL at current time' and put it here. Leave next one empty to DL normally")
+	Edit1 := ezdlGui.Add("Edit", "x48 y8 w310 h21", "'Copy URL at current time' and paste here")
 	Edit2 := ezdlGui.Add("Edit", "x48 y40 w310 h21")
 	ezdlGui.Add("Text", "x8 y9 w32 h21 +Center", "Start")
 	ezdlGui.Add("Text", "x8 y41 w32 h21 +Center", "End")
