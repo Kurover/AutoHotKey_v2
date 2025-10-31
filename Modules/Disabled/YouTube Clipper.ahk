@@ -10,9 +10,16 @@
 ;EasyAutoGUI-AHKv2 github.com/samfisherirl/Easy-Auto-GUI-for-AHK-v2
 
 GUIEzDL() {	
+	;= Variables
+	;= There's no A_Downloads in ahk...
+	downloadPath := RegRead("HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Explorer\Shell Folders", "{374DE290-123F-4565-9164-39C4925E467B}")
+	;downloadPath := "C:\Users\Illith\Downloads"
 	localSettingsPath := A_ScriptDir
+	
 	ytdlpPath := IniRead(settingsPath,"Path","ytdlp")
-	downloadPath := A_Desktop
+	ytdlpOutput := " -P " downloadPath
+	ytdlpCommand := ""
+	
 	If !(rootDir == "") {
 		localSettingsPath := rootDir
 	}
@@ -53,9 +60,10 @@ GUIEzDL() {
 	
 	ezdlGui.OnEvent('Escape', ezdlGui_close)
 	ezdlGui.OnEvent('Close', ezdlGui_close)
-	ezdlGui_close(thisgui) {
+	ezdlGui_close(*) {
 		OnClipboardChange checkClipboard, 0
 		ChangeGUIState()
+		saveSettings()
 		ezdlGui.Destroy
 	}
 	
@@ -83,14 +91,15 @@ GUIEzDL() {
 	}
 	
 	funcLinkDecoder(*) {
-		global linkSource := Edit1.Value
+		linkSource := Edit1.Value
 		If !(linkSource ~= "http|youtu.be|.com|www.") {
 			MsgBox "No links detected?", "Ermm..", 0x1000
 			Return
 		}
 		
-		ytdlpCommand := ytdlpPath " " linkSource " -P " downloadPath
+		ytdlpCommand := ytdlpPath " " linkSource ytdlpOutput
 		
+		;= Check if start time is actually the end
 		If (Edit1.Value ~= "\?t=.*") {
 			timestamp1Pos := InStr(Edit1.Value, "`?t=")
 			timestamp1 := SubStr(Edit1.Value, timestamp1Pos + 3)
@@ -120,27 +129,27 @@ GUIEzDL() {
 		If (CheckBox3.Value = 0)
 			ytdlpCommand := ytdlpCommand " --compat-options no-live-chat"
 		
-		global ytdlpCommand := ytdlpCommand
+		ytdlpCommand := ytdlpCommand
 	}
 	funcCopyCommand(*) {
-		global ytdlpCommand := ""
+		ytdlpCommand := ""
 		funcLinkDecoder()
 		If (ytdlpCommand = "")
 			Return
+		OnClipboardChange checkClipboard, 0 ; prevent 2nd editbox from filled with clipoard content
 		A_Clipboard := ytdlpCommand
+		OnClipboardChange checkClipboard
 		ToolTip("Copied!`n"
 		. ytdlpCommand )
 		SetTimer () => ToolTip(), -3000
 	}
 	funcDownload(*) {
-		global ytdlpCommand := ""
+		ytdlpCommand := ""
 		funcLinkDecoder()
 		If (ytdlpCommand = "")
 			Return
 		Run A_COMSPEC " /c " ytdlpCommand
-		OnClipboardChange checkClipboard, 0
-		saveSettings()
-		ezdlGui.Destroy()
+		ezdlGui_close()
 	}
 	saveSettings(*) {
 		oldSettings := FileRead(localSettings)
