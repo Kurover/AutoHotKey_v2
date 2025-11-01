@@ -1,4 +1,11 @@
+#Requires AutoHotkey v2
+
 ;=== Config
+#SingleInstance Force
+SetWorkingDir A_ScriptDir
+rootDir := A_ScriptDir
+settingsPath := A_ScriptDir "/settings.ini"
+varCompiler := A_ScriptDir "/Compile.ahk"
 varIconNormal := IniRead(settingsPath,"Tray","AdminIcon")
 varIconSuspend := IniRead(settingsPath,"Tray","AdminIconDisabled")
 varIconTipNormal := IniRead(settingsPath,"Tray","AdminTooltip")

@@ -1,8 +1,14 @@
+#Requires AutoHotkey v1
+
 ;=== Config
 ;=== Wow, writting v1 is actually annoying and looks confusing
+;=== Remove "#include" line below if you don't care about the library and want a memory reduction
 #NoEnv
 #SingleInstance Force
 SetWorkingDir %A_ScriptDir%
+rootDir := A_ScriptDir
+settingsPath := A_ScriptDir . "/settings.ini"
+varCompiler := A_ScriptDir . "/Compile.ahk"
 #include %A_ScriptDir%/Modules/Version1/Lib/VA.ahk
 IniRead, varIconNormal, %settingsPath%, Tray, LegacyIcon
 IniRead, varIconSuspend, %settingsPath%, Tray, LegacyIconDisabled

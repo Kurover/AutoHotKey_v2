@@ -58,33 +58,6 @@ funcCheckFile(*) {
 		FileDelete varCompileTarget
 }
 
-;=== Put required variables in
-;=== It is quite confusing having this and .core applying different settings
-;=== But it is what it is
-funcAppendPre(*) {
-	FileAppend "
-	(
-	#Requires AutoHotkey v2
-	#SingleInstance Force
-	SetWorkingDir A_ScriptDir
-	rootDir := A_ScriptDir
-	settingsPath := A_ScriptDir "/settings.ini"
-	varCompiler := A_ScriptDir "/Compile.ahk"
-	varNircmd := "External/nircmd/nircmdc.exe"`n
-	)", varCompileTarget
-}
-funcAppendPreV1(*) {
-	FileAppend "
-	(
-	#Requires AutoHotkey v1
-	#SingleInstance Force
-	SetWorkingDir %A_ScriptDir%
-	rootDir := A_ScriptDir
-	settingsPath := A_ScriptDir . "/settings.ini"
-	varCompiler := A_ScriptDir . "/Compile.ahk"`n
-	)", varCompileTarget
-}
-
 ;=== Grab txt and ahk file to wherever varCompileTargetPath points to
 funcCompile(varCompileTargetPath) {
 	Loop Files, varCompileTargetPath {
@@ -114,7 +87,6 @@ funcCleanUp(*) {
 If (varCompileMain = "true") {
 	varCompileTarget := varTargetMain
 	funcCheckFile()
-	funcAppendPre()
 	funcCompile("Modules/*")
 	funcCompile("Modules/Program/*")
 	FileAppend "#HotIf`n", varCompileTarget
@@ -126,7 +98,6 @@ If (varCompileMain = "true") {
 If (varCompileAdmin = "true") {
 	varCompileTarget := varTargetAdmin
 	funcCheckFile()
-	funcAppendPre()
 	funcCompile("Modules/Elevated/*")
 	funcCleanUp()
 }
@@ -136,7 +107,6 @@ If (varCompileAdmin = "true") {
 If (varCompileLegacy = "true") {
 	varCompileTarget := varTargetLegacy
 	funcCheckFile()
-	funcAppendPreV1()
 	funcCompile("Modules/Version1/*")
 	funcCleanUp()
 }

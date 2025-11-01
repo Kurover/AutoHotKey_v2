@@ -1,5 +1,12 @@
+#Requires AutoHotkey v2
+
 ;=== Config
 ;=== Path is assumed on where the "Run-Nitori-Gadget.ahk" directory is
+#SingleInstance Force
+SetWorkingDir A_ScriptDir
+rootDir := A_ScriptDir
+settingsPath := A_ScriptDir "/settings.ini"
+varCompiler := A_ScriptDir "/Compile.ahk"
 varIconNormal := IniRead(settingsPath,"Tray","Icon")
 varIconSuspend := IniRead(settingsPath,"Tray","IconDisabled")
 varIconTipNormal := IniRead(settingsPath,"Tray","Tooltip")
