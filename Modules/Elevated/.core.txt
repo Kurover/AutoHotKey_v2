@@ -99,6 +99,7 @@ trayOpen(ItemName, ItemPos, myMenu) {
 	ListLines
 }
 trayAutorun(ItemName, ItemPos, myMenu) {
+	funcCheckAutorun()
 	If varAutorunStatus = False {
 		Run "powershell -ExecutionPolicy Bypass -file `"Resources/task-scheduler-create.ps1`""
 		WinWait("ahk_class ConsoleWindowClass",,3)
