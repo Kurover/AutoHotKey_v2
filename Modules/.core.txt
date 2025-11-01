@@ -51,6 +51,7 @@ A_TrayMenu.Add("Enabled", traySuspend)
 A_TrayMenu.Add("Reload", trayReload)
 A_TrayMenu.Add("Recompile", trayRecompile)
 A_TrayMenu.Add("Open Log", trayOpen)
+A_TrayMenu.Add("Open Setting", traySettingOpen)
 A_TrayMenu.Add()
 A_TrayMenu.Add("Run at Start", trayAutorun)
 A_TrayMenu.Add()
@@ -82,6 +83,9 @@ trayRecompile(ItemName, ItemPos, myMenu) {
 }
 trayOpen(ItemName, ItemPos, myMenu) {
 	ListLines ; Open the ahk main window
+}
+traySettingOpen(ItemName, ItemPos, myMenu) {
+	Run settingsPath
 }
 trayAutorun(ItemName, ItemPos, myMenu) {
 	If FileExist(varAutorun) { ; varAutorun is the shortcut on your startup folder, check if it exist

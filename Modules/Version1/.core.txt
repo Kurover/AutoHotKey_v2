@@ -40,6 +40,7 @@ varScriptEnabled := true ; uhh we can't find how to check menu value so we make 
 Menu, Tray, Add, Reload, trayReload
 Menu, Tray, Add, Recompile, trayRecompile
 Menu, Tray, Add, Open Log, trayOpen
+Menu, Tray, Add, Open Setting, traySettingOpen
 Menu, Tray, Add
 Menu, Tray, Add, Run at Start, trayAutorun
 If FileExist(varAutorun)
@@ -78,6 +79,9 @@ trayRecompile:
 	Return
 trayOpen:
 	ListLines 
+	Return
+traySettingOpen:
+	Run %settingsPath%
 	Return
 trayAutorun:
 	If FileExist(varAutorun) {

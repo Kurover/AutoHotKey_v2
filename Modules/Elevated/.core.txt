@@ -76,6 +76,7 @@ A_TrayMenu.Add("Enabled", traySuspend)
 A_TrayMenu.Add("Reload", trayReload)
 A_TrayMenu.Add("Recompile", trayRecompile)
 A_TrayMenu.Add("Open Log", trayOpen)
+A_TrayMenu.Add("Open Settings", traySettingOpen)
 A_TrayMenu.Add()
 A_TrayMenu.Add("Run at Start", trayAutorun)
 A_TrayMenu.Add()
@@ -104,6 +105,9 @@ trayRecompile(ItemName, ItemPos, myMenu) {
 }
 trayOpen(ItemName, ItemPos, myMenu) {
 	ListLines
+}
+traySettingOpen(ItemName, ItemPos, myMenu) {
+	funcRunUnelevated(settingsPath)
 }
 trayAutorun(ItemName, ItemPos, myMenu) {
 	funcCheckAutorun()
