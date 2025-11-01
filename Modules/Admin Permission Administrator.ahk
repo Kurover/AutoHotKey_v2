@@ -24,10 +24,10 @@ GUIAPA()
 	Radio1 := APAGui.AddRadio("x10 y32 w108 h23", "Run as Admin")
 	Radio2 := APAGui.AddRadio("x120 y32 w108 h23 Checked", "Run un-elevated")
 	APASelection := "RunAsInvoker"
-	ButtonApply := APAGui.Add("Button", "x216 y56 w137 h31 Disabled", "Apply")
-	ButtonCopyRegPath := APAGui.Add("Button", "x8 y56 w100 h31", "Copy Reg Path")
 	ButtonCheckData := APAGui.Add("Button", "x266 y32 w87 h23 Disabled", "Check Data")
+	ButtonCopyRegPath := APAGui.Add("Button", "x8 y56 w100 h31", "Copy Reg Path")
 	ButtonRemoveRegistry := APAGui.Add("Button", "x112 y56 w100 h31 Disabled", "Remove Registry")
+	ButtonApply := APAGui.Add("Button", "x216 y56 w137 h31 Disabled Default", "Apply")
 	
 	;= Events
 	Edit1.OnEvent("Change", UpdateAPAStatus)
@@ -81,6 +81,8 @@ GUIAPA()
 			ButtonCheckData.Opt("-Disabled")
 			ButtonRemoveRegistry.Opt("-Disabled")
 		}
+		If !(Edit1.Value ~= "`.exe")
+			APATextStatus.Text := "Not an .exe"
 	}
 	CheckRegData(*) {
 		MsgBox RegRead(varRegPathAPA, Edit1.Value, 0), "Value", 0x1000
@@ -96,18 +98,31 @@ GUIAPA()
 			APASelection := varKeyUnAdmin
 		
 		APAGui.Opt("Disabled")
-		ResultAddReg := MsgBox("Are you sure? This will also replace existing value if any (usually config from compatibility assistant).", "Registry is scawwy~!", 0x1001)
-		If (ResultAddReg = "OK") {
-			RegWrite APASelection, "REG_SZ", varRegPathAPA, varEditValue
-			APAGui.Opt("-Disabled")
+		If (varEditValue ~= "`.exe") {
+			ResultAddReg := MsgBox("Are you sure? This will also replace existing value if any (usually config from compatibility assistant).", "Registry is scawwy~!", 0x1001)
+			If (ResultAddReg = "OK") {
+				RegWrite APASelection, "REG_SZ", varRegPathAPA, varEditValue
+				APAGui.Opt("-Disabled")
 			}
+			Else {
+				APAGui.Opt("-Disabled")
+				Return
+			}
+		}
 		Else {
-			APAGui.Opt("-Disabled")
-			Return
+			ResultAddReg := MsgBox("Not an executable, definitely won't work. Add anyway?", "Huh..?", 0x1001)
+			If (ResultAddReg = "OK") {
+				RegWrite APASelection, "REG_SZ", varRegPathAPA, varEditValue
+				APAGui.Opt("-Disabled")
 			}
+			Else {
+				APAGui.Opt("-Disabled")
+				Return
+			}
+		}
+		
 		UpdateAPAStatus()
 		APATextStatus.Text := "Added!"
-		
 	}
 	
 	;= Remove Registry
