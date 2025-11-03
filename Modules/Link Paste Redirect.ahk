@@ -126,24 +126,23 @@ hotkeyPasteLinkRedirect(*)
 	;== to this
 	; https://x.com/suzukannn/status/1910289114777149464
 	
-	;== Only if you use this settings in your Twitter processing config. Should be scalable to other site as long as it uses similar system
+	;== Only if you use this settings in your Twitter processing config. It should be scalable to other site as long as it uses similar system. Just need to change the template and source variable
 	; "directory": ["twitter", "{author[name]}"],
 	; "postprocessors": ["content"],
-	varGalleryDLPath := "C:\Users\Illith\Downloads\Gallery-DL"
-	varGalleryDLFolder := "Gallery-DL" ; the same folder from path above. The IF throws tantrum if it has backspace with other specific letter
-	varGalleryDLSource := "twitter"
+	varGalleryDLClipboard := StrReplace(A_Clipboard, "`\", "`/")
+	varGalleryDLOutputPath := "C:/Users/Illith/Downloads/Gallery-DL" ; replace backslash with frontslash as it may throw error in the IF check
+	
 	varGalleryDLTemplate := "https://x.com/(USER)/status/(NUMBER)"
-	If (A_Clipboard ~= varGalleryDLFolder ".*" varGalleryDLSource) {
-		usernameSource := StrReplace(A_Clipboard, varGalleryDLPath "\" varGalleryDLSource "\") ; remove most string to the last two word between slash
-		separator := InStr(usernameSource, "\") ; determine the slash position
+	varGalleryDLSource := "twitter"
+	If (varGalleryDLClipboard ~= varGalleryDLOutputPath ".*" varGalleryDLSource) {
+		usernameSource := StrReplace(varGalleryDLClipboard, varGalleryDLOutputPath "/" varGalleryDLSource "/") ; remove most string to the last two word between slash
+		varIdentifier := StrSplit(usernameSource, "/") ; take the 2 word between slash into an array
 		
-		finalUsername := SubStr(usernameSource, 1, separator - 1) ; get characters up until previous character of the slash
+		cleanSource := SubStr(varIdentifier[2], 1, StrLen(usernameSource) - 4) ; remove last 4 characters which is the file format
+		cleanSource := RegExReplace(cleanSource, "_.*") ; remove _1, usually from multi post
 		
-		finalSource := SubStr(usernameSource, separator + 1, StrLen(usernameSource) - 4) ; get characters starting from +1 of slash, removing the 4 character of file format
-		finalSource := RegExReplace(finalSource, "_.*") ; remove _1, usually from multi post
-		
-		finalLink := StrReplace(varGalleryDLTemplate, "(USER)", finalUsername)
-		A_Clipboard := StrReplace(finalLink, "(NUMBER)", finalSource)
+		finalLink := StrReplace(varGalleryDLTemplate, "(USER)", varIdentifier[1])
+		A_Clipboard := StrReplace(finalLink, "(NUMBER)", cleanSource)
 		Goto PasteRedirect
 	}
 		
