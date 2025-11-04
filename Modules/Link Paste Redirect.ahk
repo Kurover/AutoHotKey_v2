@@ -119,14 +119,20 @@ hotkeyPasteLinkRedirect(*)
 		Goto PasteRedirect
 	}
 	
+	;== Github convert to latest release. Only if the dev use consistent name for their package
+	; From	https://github.com/USER/PROJECT/releases/download/TAG/package.zip
+	; To	https://github.com/USER/PROJECT/releases/latest/download/package.zip
+	If (A_Clipboard ~= "github.com.*release") {
+		releaseTagPos := InStr(A_Clipboard, "download",,, -1) + 9 ; +9 to start AFTER the word download and slash
+		cleanLink := RegExReplace(A_Clipboard, ".*\/",,,, releaseTagPos)
+		A_Clipboard := StrReplace(cleanLink, "/download", "/latest/download")
+		Goto PasteRedirect
+	}
+
 	;== GalleryDL folder to link - Twitter
-	;== Basically it convert this
-	; C:\Users\Illith\Downloads\Gallery-DL\twitter\suzukannn\1910289114777149464_1.jpg
-	
-	;== to this
-	; https://x.com/suzukannn/status/1910289114777149464
-	
-	;== Only if you use this settings in your Twitter processing config. It should be scalable to other site as long as it uses similar system. Just need to change the template and source variable
+	; From	C:\Users\Illith\Downloads\Gallery-DL\twitter\suzukannn\1910289114777149464_1.jpg
+	; To	https://x.com/suzukannn/status/1910289114777149464
+	;== Only if you use this settings in your Twitter processing config, check their template settings. It should be scalable to other site as long as it uses similar system. Just need to change the template and source variable
 	; "directory": ["twitter", "{author[name]}"],
 	; "postprocessors": ["content"],
 	varGalleryDLClipboard := StrReplace(A_Clipboard, "`\", "`/")

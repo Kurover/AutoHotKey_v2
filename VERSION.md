@@ -2,7 +2,8 @@
 ## v1.5 04-11-25
 - Add Admin Permission Administrator
 - Add config shortcut to tray
-- Add GalleryDL twitter file path decoder into web link
+- Add GalleryDL twitter file path decoder into web link via link paste redirect
+- Add Github tag to latest releases convert via link paste redirect
 - Update Youtube Clipper and add feature from APA to it. Still WIP
 - Improve compiler and other housekeeping
 ## v1.4 17-09-25
