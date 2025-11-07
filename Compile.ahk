@@ -62,7 +62,7 @@ funcCheckFile(*) {
 funcCompile(varCompileTargetPath) {
 	Loop Files, varCompileTargetPath {
 		; Check extension. There will be a cucumber out there who put exe files (plural) and break everyhing
-		If (A_LoopFileExt ~= "i)TXT|AHK") AND NOT (A_LoopFileName ~= "==") {	
+		If (A_LoopFileExt ~= "i)TXT|AHK") AND NOT (A_LoopFileName ~= "=") {	
 			varText := FileRead(A_LoopFileFullPath)
 			varText := RegExReplace(varText, "m`a).*;compileremoveme") ; Remove all lines before ;compileremove, including itself
 			FileAppend varText "`n", varCompileTarget

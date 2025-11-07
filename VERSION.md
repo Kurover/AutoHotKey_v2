@@ -1,4 +1,8 @@
 # Version History
+## v1.6 07-11-25
+- Add Executor. One stop solution to prevent .exe from running things they don't belong, or at all.
+- Merge Admin Permission Administrator with Executor
+- Update compiler to exclude "=" instead of "=="
 ## v1.5 04-11-25
 - Add Admin Permission Administrator
 - Add config shortcut to tray
