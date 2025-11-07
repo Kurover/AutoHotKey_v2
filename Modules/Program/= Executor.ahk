@@ -259,21 +259,22 @@ Constructor()
 		myGui.Opt("+Disabled")
 		
 		;@ Add
-		If (varRegValuePerm = varKeyDataAdmin) or (varRegValuePerm = varKeyDataUnAdmin)
-			ResultAddReg := MsgBox("Are you sure? This will replace existing value (usually config from compatibility assistant). `n`n[=] Key:`n" varRegPathPerm "`n[=] Name:`n" keyName "`n[+] Data:`n" keyData , "Replace replace replace!", 0x1031)
-		Else
+		If (varRegValuePerm = 0)
 			ResultAddReg := MsgBox("Are you sure? `n`n[=] Key:`n" varRegPathPerm "`n[+] Name:`n" keyName "`n[+] Data:`n" keyData , "Check and make it double~!", 0x1001)
+		Else
+			ResultAddReg := MsgBox("Are you sure? This will replace existing value (usually config from compatibility assistant). `n`n[=] Key:`n" varRegPathPerm "`n[=] Name:`n" keyName "`n[+] Data:`n" keyData , "Replace replace replace!", 0x1031)
 		If (ResultAddReg = "OK") {
 			RegWrite keyData, "REG_SZ", varRegPathPerm, keyName
 			myGui.Opt("-Disabled")
 		}
 		Else {
 			myGui.Opt("-Disabled")
+			statusText.Text := "Canceled"
 			Return
 		}
 		
 		updateStatus1()
-		editVal1.Text := "Added!"
+		statusText.Text := "Added!"
 	}
 	;@ Group 2
 	btnRun2.OnEvent("Click", applyRegValue2)
@@ -284,21 +285,22 @@ Constructor()
 		myGui.Opt("+Disabled")
 		
 		;@ Add
-		If (varRegValueBlock = keyData)
-			ResultAddReg := MsgBox("Are you sure? This will replace existing value. Not a good idea if you don't know what the existing value does.`n`n[=] Key:`n" keyPath "`n[+] Name:`n" keyName "`n[+] Data:`n" keyData, "Admin level replacement... extra spooky~", 0x1031)
-		Else
+		If (varRegValueBlock = 0)
 			ResultAddReg := MsgBox("Are you sure? `n`n[+] Key:`n" keyPath "`n[+] Name:`n" keyName "`n[+] Data:`n" keyData, "Admin level regedit... spooky~", 0x1001)
+		Else
+			ResultAddReg := MsgBox("Are you sure? This will replace existing value. Not a good idea if you don't know what the existing value does.`n`n[=] Key:`n" keyPath "`n[+] Name:`n" keyName "`n[+] Data:`n" keyData, "Admin level replacement... extra spooky~", 0x1031)
 		If (ResultAddReg = "OK") {
 			RegWrite keyData, "REG_SZ", keyPath, keyName
 			myGui.Opt("-Disabled")
 		}
 		Else {
 			myGui.Opt("-Disabled")
+			statusText.Text := "Today is not the day.."
 			Return
 		}
 		
 		updateStatus2()
-		editVal2.Text := "Added!"
+		statusText.Text := "Hijacked and banished~!"
 	}
 	
 	
@@ -315,10 +317,11 @@ Constructor()
 		}
 		Else {
 			myGui.Opt("-Disabled")
+			statusText.Text := "Canceled!"
 			Return
 		}
 		updateStatus1()
-		editVal1.Text := "ERASED~"
+		statusText.Text := "Erased~!"
 	}
 	;@ Group 2
 	btnRestore2.OnEvent("Click", removeRegData2)
@@ -326,25 +329,19 @@ Constructor()
 		keyPath := varRegPathBlock "\" varPathExeName
 		keyName := varKeyNameBlock
 		;keyData := varKeyDataBlock
+		hasKeyNameBlock := 0
 		keyCount := 0
 		myGui.Opt("+Disabled")
 		
 		;@ Check if multiple data in the key
-		Loop Reg, keyPath
+		Loop Reg, keyPath {
 			keyCount++
-		;@ if contain other than debug
-		If (keyCount > 1) {
-			resultRemoveReg := MsgBox("Key contain more than Debugger, will only delete Debugger value.`n`n[=] Key:`n" keyPath "[-] Name:`n" keyName "`n`nConfirm Deletion.", "Check again", 0x1031)
-			If (resultRemoveReg = "OK") {
-				RegDelete keyPath, keyName
-				myGui.Opt("-Disabled")
-			}
-			Else {
-				myGui.Opt("-Disabled")
-				Return
-			}
+			If (A_LoopRegName = varKeyNameBlock)
+				hasKeyNameBlock := 1
 		}
-		Else {
+
+		;@ if contain other than debug
+		If (keyCount = 1 and hasKeyNameBlock = 1) {
 			resultRemoveReg := MsgBox("Key only contain Debugger, will delete the whole key!`n`n[-] Key:`n" keyPath "`n`nConfirm Deletion.", "Check again", 0x1031)
 			If (resultRemoveReg = "OK") {
 				RegDeleteKey keyPath
@@ -355,9 +352,25 @@ Constructor()
 				Return
 			}
 		}
+		Else If (keyCount > 1 and hasKeyNameBlock = 1) {
+			resultRemoveReg := MsgBox("Key contain more than Debugger, will only delete Debugger value.`n`n[=] Key:`n" keyPath "[-] Name:`n" keyName "`n`nConfirm Deletion.", "Check again", 0x1031)
+			If (resultRemoveReg = "OK") {
+				RegDelete keyPath, keyName
+				myGui.Opt("-Disabled")
+			}
+			Else {
+				myGui.Opt("-Disabled")
+				statusText.Text := "Order retracted."
+				Return
+			}
+		}
+		Else  {
+			resultRemoveReg := MsgBox("This message box should not be possible, cancelling.", "Holdup", 0x1010)
+			Return
+		}
 		
 		updateStatus2()
-		editVal2.Text := "ERASED~"
+		statusText.Text := "Be free, little numbers!"
 	}
 	;= Help button event
 	btnHelp1.OnEvent("Click", tooltipHelp1)
