@@ -134,11 +134,13 @@ Constructor()
 	;= Edit box changes
 	editPath.OnEvent("Change", editBoxUpdate)
 	editBoxUpdate(*) {
-		If (editPath.Value ~= "\.exe") {
+		editCheck := inStr(editPath.Value, ".exe")
+		editCheckMulti := inStr(editPath.Value, ".exe",,,2)
+		If (editCheck >= 0) AND (editCheckMulti = 0) {
 			statusText.Text := "A-O.K!"
 		}
 		Else {
-			statusText.Text := "Please select an executable file!"
+			statusText.Text := "Please select a single executable file!"
 			If !(isPermissionPossible = 0) {
 				editVal1.Text := "-"
 				disableGroup1()
